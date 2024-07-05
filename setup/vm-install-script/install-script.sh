@@ -9,19 +9,53 @@ source ~/.bashrc
 apt-get autoremove -y  #removes the packages that are no longer needed
 apt-get update
 systemctl daemon-reload
-sudo apt-get install -y apt-transport-https ca-certificates curl
-sudo mkdir -p /etc/apt/keyrings
 
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+KUBE_LATEST=$(curl -L -s https://dl.k8s.io/release/stable.txt | awk 'BEGIN { FS="." } { printf "%s.%s", $1, $2 }')
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://pkgs.k8s.io/core:/stable:/${KUBE_LATEST}/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/${KUBE_LATEST}/deb/ /" >> /etc/apt/sources.list.d/kubernetes.list
 
 apt-get update
+KUBE_VERSION=$(apt-cache madison kubeadm | head -1 | awk '{print $3}')
 apt-get install -y docker.io vim build-essential jq python3-pip kubelet kubectl kubernetes-cni kubeadm
 pip3 install jc
 
 ### UUID of VM 
 ### comment below line if this Script is not executed on Cloud based VMs
 jc dmidecode | jq .[1].values.uuid -r
+
+systemctl enable kubelet
+
+
+echo ".........----------------#################._.-.-KUBERNETES-.-._.#################----------------........."
+rm -f /root/.kube/config
+kubeadm reset -f
+
+mkdir -p /etc/containerd
+containerd config default | sed 's/SystemdCgroup = false/SystemdCgroup = true/' > /etc/containerd/config.toml
+systemctl restart containerd
+
+# uncomment below line if your host doesnt have minimum requirement of 2 CPU
+# kubeadm init --pod-network-cidr '10.244.0.0/16' --service-cidr '10.96.0.0/16' --ignore-preflight-errors=NumCPU --skip-token-print
+kubeadm init --pod-network-cidr '10.244.0.0/16' --service-cidr '10.96.0.0/16'  --skip-token-print
+
+mkdir -p ~/.kube
+cp -i /etc/kubernetes/admin.conf ~/.kube/config
+
+kubectl apply -f "https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s-1.11.yaml"
+kubectl rollout status daemonset weave-net -n kube-system --timeout=90s
+sleep 5
+
+echo "untaint controlplane node"
+node=$(kubectl get nodes -o=jsonpath='{.items[0].metadata.name}')
+for taint in $(kubectl get node $node -o jsonpath='{range .spec.taints[*]}{.key}{":"}{.effect}{"-"}{end}')
+do
+    kubectl taint node $node $taint
+done
+kubectl get nodes -o wide
+
+
+echo ".........----------------#################._.-.-Docker-.-._.#################----------------........."
 
 cat > /etc/docker/daemon.json <<EOF
 {
@@ -35,29 +69,6 @@ mkdir -p /etc/systemd/system/docker.service.d
 systemctl daemon-reload
 systemctl restart docker
 systemctl enable docker
-systemctl enable kubelet
-systemctl start kubelet
-
-echo ".........----------------#################._.-.-KUBERNETES-.-._.#################----------------........."
-rm /root/.kube/config
-kubeadm reset -f
-
-# uncomment below line if your host doesnt have minimum requirement of 2 CPU
-# kubeadm init --kubernetes-version=${KUBE_VERSION} --ignore-preflight-errors=NumCPU --skip-token-print
-kubeadm init --kubernetes-version=${KUBE_VERSION} --skip-token-print
-
-mkdir -p ~/.kube
-sudo cp -i /etc/kubernetes/admin.conf ~/.kube/config
-
-kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
-
-sleep 60
-
-echo "untaint controlplane node"
-kubectl taint node $(kubectl get nodes -o=jsonpath='{.items[].metadata.name}') node.kubernetes.io/not-ready:NoSchedule-
-kubectl taint node $(kubectl get nodes -o=jsonpath='{.items[].metadata.name}') node-role.kubernetes.io/master:NoSchedule-
-kubectl get node -o wide
-
 
 
 echo ".........----------------#################._.-.-Java and MAVEN-.-._.#################----------------........."
@@ -65,7 +76,6 @@ sudo apt install openjdk-11-jdk -y
 java -version
 sudo apt install -y maven
 mvn -v
-
 
 
 echo ".........----------------#################._.-.-JENKINS-.-._.#################----------------........."
@@ -81,5 +91,6 @@ sudo systemctl start jenkins
 #sudo systemctl status jenkins
 sudo usermod -a -G docker jenkins
 echo "jenkins ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 
 echo ".........----------------#################._.-.-COMPLETED-.-._.#################----------------........."
