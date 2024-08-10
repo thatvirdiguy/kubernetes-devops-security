@@ -45,6 +45,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!-- Jacoco Plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -64,6 +65,7 @@
                     </execution>
                 </executions>    
             </plugin>
+            <!-- PITest Mutation Plugin -->
             <plugin>
                 <groupId>org.pitest</groupId>
                 <artifactId>pitest-maven</artifactId>
@@ -81,6 +83,16 @@
                         <outputFormat>XML</outputFormat>
                         <outputFormat>HTML</outputFormat>
                     </outputFormats>
+                </configuration>
+            </plugin>
+            <!-- Dependency Check Plugin -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>6.1.6</version>
+                <configuration>
+                    <format>ALL</format>
+                    <failBuildOnCVSS>5</failBuildOnCVSS> <!-- fail the build for CVSS greater than or equal to 5 -->
                 </configuration>
             </plugin>
         </plugins>
