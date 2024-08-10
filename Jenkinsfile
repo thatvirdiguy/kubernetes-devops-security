@@ -30,7 +30,7 @@ pipeline {
       }
       stage('SonarQube - SAST') {
         steps {
-            sh 'mvn clean verify sonar:sonar -Dsonar.java.jdkHome=/usr/lib/jvm/openjdk-11/ -Dsonar.projectKey=numeric-application -Dsonar.projectName="numeric-application" -Dsonar.host.url=http://devsecops-demo.southindia.cloudapp.azure.com:9000 -Dsonar.token=sqp_e6d844b591cfb935f5426d3ff297fecf6fec4aa7'
+            sh 'mvn sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.host.url=http://devsecops-demo.southindia.cloudapp.azure.com:9000 -Dsonar.login=bad04de9dee327abdd57dda48cfcb79a0b9b4599'
           }
       }
       stage('Docker Build and Push') {
