@@ -82,6 +82,7 @@
                         <outputFormat>HTML</outputFormat>
                     </outputFormats>
                 </configuration>
+            </plugin>
         </plugins>
     </build>
 
