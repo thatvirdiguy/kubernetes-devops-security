@@ -20,9 +20,11 @@ pipeline {
       }
       stage('Docker Build and Push') {
         steps {
-          sh 'printenv'
-          sh 'docker build -t thatvirdiguy/numeric-app:""$GIT_COMMIT"" .'
-          sh 'docker push thatvirdiguy/numeric-app:""$GIT_COMMIT""'
+          withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+            sh 'printenv'
+            sh 'docker build -t thatvirdiguy/numeric-app:""$GIT_COMMIT"" .'
+            sh 'docker push thatvirdiguy/numeric-app:""$GIT_COMMIT""'
+          }
         }
       } 
     }
