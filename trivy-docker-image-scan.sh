@@ -13,6 +13,7 @@ echo "Exit Code: $exit_code"
 # Check scan results
 if [[ "${exit_code}" == 1 ]]; then
   echo "Container Scanning via Trivy: Vulnerabilities found."
+  exit 1;
 else
   echo "Container Scanning via Trivy: No CRITICAL vulnerabilities found."
 fi;
