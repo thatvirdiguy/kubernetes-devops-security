@@ -22,7 +22,6 @@ spec:
         securityContext:
           runAsNonRoot: true
           runAsUser: 100
-          readOnlyRootFileSystem: true
 ---
 apiVersion: v1
 kind: Service
