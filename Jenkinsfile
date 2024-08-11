@@ -108,7 +108,6 @@ pipeline {
                 sh 'kubectl -n default rollout undo deploy ${deploymentName}'
               }
             }
-            throw e
           }
         }
       }
