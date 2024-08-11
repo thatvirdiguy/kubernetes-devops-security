@@ -120,6 +120,13 @@ pipeline {
           }    
         }
       }
+      stage('Promote to PROD?') {
+        steps {
+          timeout(time: 2, unit: 'DAYS') {
+            input 'Do you want to approve the deployment to Production Environment/Namespace?'
+          }   
+        }
+      }
   }
 
   post {
