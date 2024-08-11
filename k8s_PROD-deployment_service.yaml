@@ -26,7 +26,7 @@ spec:
         - mountPath: /tmp
           name: vol
         securityContext:
-          capabilties:
+          capabilities:
             drop:
               - NET_RAW
           runAsNonRoot: true
