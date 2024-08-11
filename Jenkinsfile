@@ -65,7 +65,7 @@ pipeline {
           }
         }
       }
-      stage('Kubernetes Security - OPA Conftest + Kubesec') {
+      stage('Kubernetes Security - OPA Conftest + Kubesec + Trivy') {
         steps {
           parallel (
             "OPA Conftest": {
@@ -73,6 +73,9 @@ pipeline {
             },
             "Kubesec": {
               sh 'bash kubesec-scan.sh'
+            }
+            "Trivy": {
+              sh 'bash trivy-k8s-scan.sh'
             }
           )
         }         
