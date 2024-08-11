@@ -7,7 +7,7 @@ pipeline {
     containerName = "devsecops-container"
     serviceName = "devsecops-svc"
     imageName = "thatvirdiguy/numeric-app:${GIT_COMMIT}"
-    applicationURL = "http://devsecops-demo.southindia.cloudapp.azure.com/"
+    applicationURL = "http://devsecops-demo.southindia.cloudapp.azure.com"
     applicationURI = "/increment/99"
   }
   
@@ -122,5 +122,5 @@ pipeline {
       dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
     }
   }
-  
+
 }
