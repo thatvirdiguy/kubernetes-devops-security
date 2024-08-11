@@ -34,9 +34,17 @@ pipeline {
               sh 'mvn dependency-check:check'
         }
       }
-      stage('Trivy - Container Security') {
+      stage('Trivy + OPA Conftest - Container Security') {
         steps {
+          parallel (
+            "Trivy": {
               sh 'bash trivy-docker-image-scan.sh'
+            },
+            "OPA Conftest": {
+              sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-docker-security.rego Dockerfile'
+            }
+          )
+              
         }
       }
       stage('Docker Build and Push') {
