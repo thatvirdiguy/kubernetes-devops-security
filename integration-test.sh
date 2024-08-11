@@ -16,7 +16,7 @@ if [[ ! -z "$PORT" ]]; then
     echo "Increment Test passed."
   else
     echo "Increment Test failed."
-    exit 1;
+    exit 1;    
   fi;
 
   if [[ "$http_code" == 200 ]]; then
