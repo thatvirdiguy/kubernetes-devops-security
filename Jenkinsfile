@@ -65,10 +65,17 @@ pipeline {
           }
         }
       }
-      stage('Kubernetes Security - OPA Conftest') {
+      stage('Kubernetes Security - OPA Conftest + Kubesec') {
         steps {
+          parallel (
+            "OPA Conftest": {
               sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego k8s_deployment_service.yaml'
+            },
+            "Kubesec": {
+              sh 'bash kubesec-scan.sh'
             }
+          )
+        }         
       }
       stage('Kubernetes Depolyment - DEV') {
         steps {
