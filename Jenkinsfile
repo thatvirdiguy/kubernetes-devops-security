@@ -19,7 +19,7 @@ pipeline {
           sh "mvn org.pitest:pitest-maven:mutationCoverage"
         }
       }
-      stage('SonarQube - SAST') {
+      stage('SAST - SonarQube') {
         steps {
             withSonarQubeEnv('SonarQube') {
               sh 'mvn sonar:sonar -Dsonar.projectKey=numeric-application'
@@ -29,12 +29,12 @@ pipeline {
             }
           }
       }
-      stage('Dependency Check - SCA') {
+      stage('SCA - Dependency Check') {
         steps {
               sh 'mvn dependency-check:check'
         }
       }
-      stage('Trivy + OPA Conftest - Container Security') {
+      stage('Container Security - Trivy + OPA Conftest') {
         steps {
           parallel (
             "Trivy": {
@@ -54,6 +54,13 @@ pipeline {
             sh 'docker build -t thatvirdiguy/numeric-app:""$GIT_COMMIT"" .'
             sh 'docker push thatvirdiguy/numeric-app:""$GIT_COMMIT""'
           }
+        }
+      }
+      stage('Kubernetes Security - OPA Conftest') {
+        steps {
+            "OPA Conftest": {
+              sh 'docker run --rm -v $(pwd):/project openpolicyagent/conftest test --policy opa-k8s-security.rego k8s_deployment_services.yaml'
+            }
         }
       }
       stage('Kubernetes Depolyment - DEV') {
