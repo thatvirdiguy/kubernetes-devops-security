@@ -28,8 +28,7 @@ spec:
         securityContext:
           runAsNonRoot: true
           runAsUser: 100
-# commenting this out because kubesec doesn't seem to like this
-#         readOnlyRootFileSystem: true
+          readOnlyRootFilesystem: true
 ---
 apiVersion: v1
 kind: Service
