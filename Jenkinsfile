@@ -127,6 +127,20 @@ pipeline {
           }   
         }
       }
+      stage('Kubernetes CIS Benchmark') {
+        steps {
+          script {
+            parallel (
+              "Master": {
+                sh 'bash cis-master.sh'
+              },
+              "Node": {
+                sh 'bash cis-kubelet.sh'
+              }
+            )
+          }   
+        }
+      }
   }
 
   post {
