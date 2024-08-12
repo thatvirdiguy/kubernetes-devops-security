@@ -33,6 +33,20 @@ def call(String buildStatus = 'STARTED') {
                 "fields": [
                     [
                         "type": "mrkdwn",
+                        "text": "*Deployment Name:*\n${deploymentName}"
+                    ]
+                ],
+                "accessory": [
+                    "type": "image",
+                    "image_url": "https://raw.githubusercontent.com/thatvirdiguy/kubernetes-devops-security/blob/main/slack-emojis/k8s.png",
+                    "alt_text": "Kubernetes Icon"
+                ]
+            ],
+            [
+                "type": "section",
+                "fields": [
+                    [
+                        "type": "mrkdwn",
                         "text": "*Job Name:*\n${env.JOB_NAME}"
                     ],
                     [
@@ -43,7 +57,7 @@ def call(String buildStatus = 'STARTED') {
                 "accessory": [
                     "type": "image",
                     "image_url": "https://raw.githubusercontent.com/thatvirdiguy/kubernetes-devops-security/blob/main/slack-emojis/jenkins.png",
-                    "alt_text": "Slack Icon"
+                    "alt_text": "Jenkins Icon"
                 ]
             ],
             [
