@@ -221,7 +221,7 @@ pipeline {
 
       stage('Testing Slack: Success') {
         steps {
-          exit 0;
+          sh 'exit 0'
         }
       }
 
