@@ -42,7 +42,7 @@ def call(String buildStatus = 'STARTED') {
                 ],
                 "accessory": [
                     "type": "image",
-                    "image_url": "https://raw.githubusercontent.com/sidd-harth/numeric/main/images/jenkins-slack.png",
+                    "image_url": "https://raw.githubusercontent.com/thatvirdiguy/kubernetes-devops-security/blob/main/slack-emojis/jenkins.png",
                     "alt_text": "Slack Icon"
                 ]
             ],
@@ -81,7 +81,7 @@ def call(String buildStatus = 'STARTED') {
                 ],
                 "accessory": [
                     "type": "image",
-                    "image_url": "https://raw.githubusercontent.com/sidd-harth/numeric/main/images/github-slack.png",
+                    "image_url": "https://raw.githubusercontent.com/thatvirdiguy/kubernetes-devops-security/blob/main/slack-emojis/github.png",
                     "alt_text": "GitHub Icon"
                 ]
             ],
