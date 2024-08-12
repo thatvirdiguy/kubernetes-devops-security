@@ -22,7 +22,7 @@ List<Map> getStageResults( RunWrapper build ) {
     def errors = errorActions?.collect{ it.error }.unique()
 
     return [
-      id: stage_id,
+      id: stage.id,
       failedStageName: stage.displayName,
       result: "${stage.status.result}",
       errors: errors
