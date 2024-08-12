@@ -225,6 +225,12 @@ pipeline {
         }
       }
 
+      stage('Testing Slack: Failure') {
+        steps {
+          sh 'exit 1'
+        }
+      }
+
   }
 
  post {
